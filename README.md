@@ -1,8 +1,7 @@
 # Zomato-Gen-AI-Internship-Assignment   
+#### A smart solution for all your cravings: easily explore and satisfy your inquiries through a smooth, user-friendly interface.
 
-## Solution and Fullfilment of Assignment Requirements
-
-### 1. Web Scraper Component and Knowledge Base Creation 
+## 1. Web Scraper Component and Knowledge Base Creation 
 
 It consists of three Python scripts:
 - `menu_scraper.py` — Scrapes menu items, descriptions, prices, and special attributes.
@@ -65,23 +64,146 @@ Menu Item Data (per dish):
     }
 }
 ```
-### Running web scraping component
-inside web scraping component follow the below commands
+## 3. RAG Chatbot 
+### Overview of component
 
-1. install required libraries
+A chatbot that uses Retrieval-Augmented Generation (RAG) architecture to answer restaurant and menu-related queries, backed by a Pinecone database and Hugging Face LLMs.
+Built with Streamlit for a simple and clean UI.
+
+### Features
+
+1. Menu item availability and details
+2. Restaurant feature comparisons
+3. Price range inquiries
+4. Dietary restriction information
+5. Handles ambiguous and out-of-scope queries
+6. Maintains basic conversation history
+
+### Project Structure
+```
+db/
+  └── pinecone.py
+structures/
+  ├── menu.py
+  └── resturant.py
+utils/
+  ├── generatePrompt.py
+  └── llm.py
+.env
+knowledgebase.json
+main.py
+requirements.txt
+```
+### Functionality of each component
+1. Database (`pinecone.py`)
+- Manages embeddings storage and retrieval using Pinecone.
+
+2. Structures (`menu.py` and `restaurant.py`)
+- **`menu.py`**: Handles menu items, prices, and dietary tags.
+- **`restaurant.py`**: Handles restaurant features for comparison.
+
+3. Utilities (`llm.py` and `generatePrompt.py`)
+- **`llm.py`**: Interfaces with a Hugging Face LLM to generate responses.
+- **`generatePrompt.py`**: Builds structured prompts for the LLM.
+
+4. Main Application (`main.py`)
+- Hosts the Streamlit app UI for chatbot interaction.
+
+5. Knowledge Base (`knowledgebase.json`)
+- JSON file containing restaurant and menu information for embedding.
+
+6. Environment Configuration (`.env`)
+- Stores API keys and private configurations securely.
+
+### System workflow
+```
+flowchart TD
+    A[User Query] --> B[Retrieve relevant data from Pinecone]
+    B --> C[Generate prompt using retrieved data]
+    C --> D[Send prompt to Hugging Face LLM]
+    D --> E[LLM generates a natural language response]
+    E --> F[Display response in Streamlit UI]
+```
+# Installation and setup guide
+
+### Clone the repository
+```
+https://github.com/apoorv1110/Zomato-Gen-AI-Internship-Assignment.git
+```
+### Install dependencies
 ```
 pip install -r requirements.txt
 ```
-it will install all the required libraries
 
-2. Run web scraping python Files
+## Move into the directory
+
+### Web Scraping Component
+
+```
+cd web scraper component
+```
+Run web scraping python Files
+
 ```
 python3 run main.py
 ```
 It will create a restaurant.json with unfiltered data
 
-3. Format and generate the knowledge base:
+Format and generate the knowledge base:
 ```
 python3 format.py
 ```
 It will create a Knowledgebase.json with cleaned data
+
+### RAG Chatbot
+
+```
+cd RAG_CHAT-BOT
+```
+
+Set up environment variable
+```
+PINECONE_API_KEY=your_pinecone_key
+HUGGINGFACE_API_KEY=your_huggingface_key
+GEMINI_API_KEY = your_free_gemini_api_key
+```
+Running the streamlit application
+```
+streamlit run main.py
+```
+Streamlit application will start running on local hoat and a UI like below will get opened up
+- For the first time to start chatbot , click on Upload data under admin actions button
+- This will enable the LLM to use data for information retrieval
+- Once the data is uploaded successfully you can use chatbot for your queries
+
+<img width="1280" alt="Screenshot 2025-04-27 at 12 16 03 PM" src="https://github.com/user-attachments/assets/03643da7-fbb8-47c2-9c23-a7a36754974b" />
+<img width="1280" alt="Screenshot 2025-04-27 at 12 29 28 PM" src="https://github.com/user-attachments/assets/4f17bef7-ee03-4079-861b-6fd5de0870e0" />
+<img width="1280" alt="Screenshot 2025-04-27 at 12 31 33 PM" src="https://github.com/user-attachments/assets/88fab175-0fbd-43e0-95f5-11df4b0a7ac0" />
+
+# 🛠️ Technology Stack Used
+
+## Languages
+- **Python 3.10+** — Core development language for backend logic and scripting.
+
+## Frameworks & Libraries
+- **BeautifulSoup** — Web scraping library for parsing HTML and XML documents.
+- **Requests** — Python HTTP library for making API calls and web scraping.
+- **Streamlit** — Frontend framework to quickly build interactive UIs for the chatbot.
+- **Pinecone** — Vector database used to store and retrieve embeddings efficiently.
+- **Hugging Face Transformers** — Access to state-of-the-art LLMs for response generation.
+- **dotenv** — For securely managing environment variables like API keys.
+- **json** — To process and manage structured data formats (knowledge base).
+
+## Databases
+- **Pinecone** — Used for scalable similarity search and retrieval of vectorized knowledge base data.
+
+## APIs
+- **Hugging Face Inference API** — For generating human-like natural language responses.
+- **Gemini API** — Additional large language model support.
+
+## Tools
+- **Streamlit CLI** — Used to run and deploy the chatbot locally.
+- **Git & GitHub** — For version control and project collaboration.
+
+
+
