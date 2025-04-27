@@ -124,6 +124,10 @@ flowchart TD
     D --> E[LLM generates a natural language response]
     E --> F[Display response in Streamlit UI]
 ```
+
+# Project Workflow
+![ChatGPT Image Apr 27, 2025, 12_37_37 PM](https://github.com/user-attachments/assets/521f7633-93c4-4d17-abaf-82e8a28f763d)
+
 # Installation and setup guide
 
 ### Clone the repository
