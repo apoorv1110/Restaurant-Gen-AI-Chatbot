@@ -28,7 +28,7 @@ asyncio.set_event_loop(loop)
 
 # Upload function
 async def upload_data():
-    with open("../RAG/knowledgebase.json", "r", encoding="utf-8") as f:
+    with open("../rag_chat-bot/knowledgebase.json", "r", encoding="utf-8") as f:
         data = json.load(f)
     
     for restaurant_data in data:

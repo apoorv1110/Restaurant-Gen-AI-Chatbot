@@ -1,67 +1,69 @@
 """
-File: generate_prompt.py
-
-Utility to build a conversational prompt by blending user input
-with optional restaurant or menu document context.
+Module: generatePrompt.py
+Provides a helper to construct an LLM prompt by combining the user query
+and enriched document data, with a general fallback for non-restaurant queries.
 """
 
-def generatePrompt(message: str, documents: list) -> str:
+def generatePrompt(message: str, docs: list) -> str:
     """
-    Constructs a formatted prompt for the LLM based on:
-    - Enriched document context (for restaurant/menu-based queries)
-    - General fallback tone for unrelated or casual queries
+    Build a prompt that:
+      - If restaurant/menu docs are provided, includes them for restaurant recommendations.
+      - Otherwise, handles general queries with a friendly restaurant-assistant tone.
 
     Args:
-        message (str): The user's input message.
-        documents (list): List of dictionaries fetched from the vector store.
-
+        message: The original user query.
+        docs: A list of dictionaries from the vector store (may be empty).
     Returns:
-        str: A fully assembled prompt ready for model consumption.
+        A formatted prompt string ready to send to the LLM.
     """
-
-    # Handle restaurant or menu-related queries
-    if documents and any(doc.get('vector_type') in ('restaurant', 'menu') for doc in documents):
-        prompt = [
-            "You are a knowledgeable assistant specializing in restaurant recommendations.",
-            "Always answer confidently, using clear and direct language.",
-            "Avoid expressions of uncertainty—fill in gaps with reasonable assumptions if necessary.",
+    # Restaurant recommendation flow
+    if docs and any(doc.get('vector_type') in ('resturant', 'menu') for doc in docs):
+        prompt_lines = [
+            "You are a confident restaurant recommendation assistant.",
+            "Always provide a clear, direct answer to the user's question.",
+            "Never say you cannot answer; instead, supply specific details or reasonable fabrications.",
             "",
             f"User Query: {message}",
             ""
         ]
 
-        for idx, document in enumerate(documents, start=1):
-            prompt.append(f"--- Document {idx} ({document.get('vector_type', 'unknown')}) ---")
-            for field in sorted(document.keys()):
-                if field in {'_score', 'vector_type'}:
+        for idx, doc in enumerate(docs, 1):
+            header = f"--- Document {idx} ({doc.get('vector_type', 'unknown')}) ---"
+            prompt_lines.append(header)
+            for key in sorted(doc.keys()):
+                if key in ('_score', 'vector_type'):
                     continue
-                prompt.append(f"{field}: {document[field]}")
-            prompt.append(f"Relevance Score: {document.get('_score', 'N/A')}")
-            prompt.append("")
+                prompt_lines.append(f"{key}: {doc[key]}")
+            prompt_lines.append(f"Relevance Score: {doc.get('_score')}")
+            prompt_lines.append("")
 
-        prompt.extend([
-            "Using the above context, offer a direct recommendation.",
-            "If information is missing, confidently fill in plausible details without mentioning limitations.",
-            "Avoid apologies or statements of ignorance."
+        prompt_lines.extend([
+            "Using the above information, give a concise, direct recommendation.",
+            "If details are missing, invent plausible specifics to satisfy the user's request without stating uncertainty.",
+            "Do not include any caveats or disclaimers of ignorance."
         ])
 
-        return "\n".join(prompt)
+        return "\n".join(prompt_lines)
 
-    # Handle general fallback conversation
-    fallback_prompt = [
-        "You are a warm and engaging restaurant recommendation chatbot.",
-        "Your responses should be professional yet approachable, including 1–3 emojis (🍽️, 😄, 🍴, 🍲, 🤖) where natural.",
+    # General fallback flow for non-restaurant queries
+    general_lines = [
+        "You are a friendly yet professional restaurant recommendation assistant.",
+        "Your job is to respond to greetings and general queries in a clear, helpful, and engaging way.",
+        "Include 1-3 well-placed emojis (like 🍽️, 😄, 🍴, 🍲, or 🤖) to make your responses feel warm and human.",
         "",
-        "Guidelines:",
-        "- For greetings (hi, hello, hey), respond with a welcoming message and a short intro about yourself.",
-        "- For queries like 'who are you' or 'what can you do', explain your role enthusiastically with a couple of emojis.",
-        "- Keep messages concise, friendly, and on-topic (restaurant and dining-related).",
-        "- Do not engage with personal or unrelated questions.",
-        "- Maintain a premium but friendly tone throughout.",
+        "Follow these rules:",
         "",
-        "Use chat history if needed for better context.",
+        "- If the user sends a greeting like 'hi', 'hello', or 'hey', respond with a warm welcome and a brief intro of what you do as a restaurant assistant. Use one or two emojis to add friendliness.",
+        "",
+        "- If the user asks 'who are you', 'what can you do', or 'tell me about yourself', reply with an engaging introduction that describes your role as a restaurant recommendation assistant, your capabilities (e.g., suggesting cuisines, locations, menu highlights), and how you can help users discover great dining experiences. Add a friendly emoji or two.",
+        "",
+        "- Keep responses concise and conversational. Match a premium yet approachable tone—informative but not stiff. Don't overuse emojis, but feel free to add a touch where it fits.",
+        "",
+        "- Do not answer personal or off-topic questions. Stick to restaurant-related assistance.",
+        "",
+        "Use chat history for context when needed, and always aim to make users feel welcomed and informed.",
         "",
         f"User Query: {message}",
     ]
 
-    return "\n".join(fallback_prompt)
+    return "\n".join(general_lines)
