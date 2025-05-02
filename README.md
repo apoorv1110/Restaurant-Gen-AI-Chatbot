@@ -1,4 +1,4 @@
-# Zomato-Gen-AI-Internship-Assignment   
+# Zomato-Gen-AI-Chat Bot
 #### A smart solution for all your cravings: easily explore and satisfy your inquiries through a smooth, user-friendly interface.
 
 # Demo Vedio
