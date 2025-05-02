@@ -172,7 +172,7 @@ cd RAG_CHAT-BOT
 Set up environment variable
 ```
 PINECONE_API_KEY=your_pinecone_key
-HUGGINGFACE_API_KEY=your_huggingface_key
+MONGODB_URI=your_mongodb_cluster_uri
 GEMINI_API_KEY = your_free_gemini_api_key
 ```
 Running the streamlit application
